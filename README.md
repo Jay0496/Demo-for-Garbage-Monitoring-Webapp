@@ -93,6 +93,11 @@ python demo_app.py
      - **Combined Warning**: Both conditions are true.
 
 ---
+## Output
+![image](https://github.com/user-attachments/assets/6bc87797-eed3-4a9e-983b-c0a148c2dab1)
+
+
+---
 
 ## Note on `sensor_data.txt`
 The `sensor_data.txt` file is required for the application to function but is not included in this repository. Create this file manually following the described format to test the application.
