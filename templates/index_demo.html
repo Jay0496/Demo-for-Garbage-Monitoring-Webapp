@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Garbage Bin Status</title>
+    <meta http-equiv="refresh" content="5"> <!-- Refresh every 5 seconds -->
+    <style>
+        /* CSS styling for a light green and forest green theme */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #a5d6a7;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 14.2857%;
+            background-color: #a5d6a7;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%;
+            border-right: 2px solid #2e7d32;
+        }
+
+        .tab {
+            background-color: #a5d6a7;
+            color: #2e7d32;
+            padding: 20px;
+            margin-bottom: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            text-align: left;
+            border-radius: 4px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .tab:hover {
+            background-color: #81c784;
+        }
+
+        .content {
+            width: 85.7143%;
+            padding: 20px;
+            background-color: #ffffff;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .bin {
+            height: 200px;
+            width: 100px;
+            border: 2px solid #2e7d32;
+            position: relative;
+            background-color: #c8e6c9;
+            margin: 20px auto;
+        }
+
+        .fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: #1b5e20;
+            transition: height 2s;
+        }
+
+        .table {
+            margin: 10px auto;
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #e8f5e9;
+        }
+
+        .table th, .table td {
+            border: 1px solid #2e7d32;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <form method="POST" action="/">
+                <h3>Select Sensor</h3>
+                {% for sensor in sensors %}
+                    {% if not loop.last %}
+                        <button type="submit" name="sensor_id" value="{{ sensor }}" class="tab">{{ sensor }}</button>
+                    {% endif %}
+                {% endfor %}
+            </form>
+        </div>
+
+        <div class="content">
+            <h1>Garbage Bin Monitoring</h1>
+
+            <!-- Warning messages based on conditions -->
+            <div class="warning" {% if not battery_warning and not fullness_warning and not combined_warning %}style="display:none;"{% endif %}>
+                {% if combined_warning %}
+                    Warning: Battery low and bin almost full!
+                {% elif battery_warning %}
+                    Warning: Battery low!
+                {% elif fullness_warning %}
+                    Warning: Bin almost full!
+                {% endif %}
+            </div>
+
+            <h2>Sensor ID: {{ selected_sensor }}</h2>
+            <div class="bin">
+                <div class="fill" style="height: {{ readings[-1]['fullness'] }}%;"></div>
+            </div>
+            <h3>Last 3 Readings</h3>
+            <table class="table">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Fullness (%)</th>
+                    <th>Battery (%)</th>
+                </tr>
+                {% for reading in readings %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ reading['fullness'] }}%</td>
+                    <td>{{ reading['battery'] }}%</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>
